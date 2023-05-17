@@ -23,6 +23,19 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const productCollection = client.db("spaCommerceDB").collection("eCommerce");
+
+    app.get("/products", async (req, res) => {
+      const result = await productCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/totalProducts", async (req, res) => {
+      const result = await productCollection.estimatedDocumentCount();
+      res.send({ totalProducts: result });
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -38,5 +51,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("SPA E Commerce Server running");
+  console.log(`SPA E Commerce Server running ${port}`);
 });
